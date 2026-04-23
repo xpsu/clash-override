@@ -1,0 +1,22 @@
+# 依赖目录
+node_modules/
+
+# IDE 配置
+.idea/
+.vscode/
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# 日志文件
+*.log
+npm-debug.log*
+
+# 运行时数据
+*.pid
+*.seed
+
+# 生成的配置文件（如果包含敏感信息）
+source.yaml
+*.yaml.bak
