@@ -1,25 +1,32 @@
-# AGENTS.md - Clash Debug 项目指南
+# AGENTS.md - Clash Override 项目指南
 
 ## 项目概述
 
-Node.js 项目，用于生成 Clash 代理配置。读取 YAML 源文件，输出带有策略组和规则的 Clash 配置。
+Clash/Mihomo 代理配置覆写脚本集合，用于 Clash Verge、Clash Meta for Android 等客户端的「覆写脚本」功能。
 
-**技术栈**: Node.js + ES Modules + js-yaml
+**技术栈**: 纯 JavaScript (ES Modules)，无需外部依赖
 
-## 构建和运行命令
+## 文件说明
 
-```bash
-npm install                  # 安装依赖
+| 文件 | 用途 |
+|------|------|
+| `clash.js` | 主脚本 - Geodata + Loyalsoldier 混合 |
+| `clash-latest.js` | 最新稳定版本（推荐用于覆写） |
+| `clash-example.js` | 示例代码，供参考学习 |
 
-node clash.js                # 主脚本 - Geodata + Loyalsoldier
-node clash-blackmatrix7.js   # Blackmatrix7 规则源
-node clash-geodata.js        # Geodata 模式配置
-node clash-Loyalsoldier.js   # Loyalsoldier 规则源
+## 使用方式
+
+脚本通过 Clash 客户端的「覆写脚本」功能直接执行，**无需安装依赖**。
+
+### 覆写脚本原理
+
+```javascript
+// 客户端将已解析的 config 对象传入 main 函数
+function main(config) {
+  // 修改 config
+  return config
+}
 ```
-
-**验证 YAML**: `node -e "import('js-yaml').then(y => console.log(y.load(require('fs').readFileSync('./source.yaml', 'utf8'))))"`
-
-**测试**: 项目无正式测试框架，手动运行脚本验证输出。
 
 ## 代码风格指南
 
@@ -28,61 +35,64 @@ node clash-Loyalsoldier.js   # Loyalsoldier 规则源
 - **必须使用 ES Modules** (`import`/`export`)
 - package.json 已配置 `"type": "module"`
 
-### 导入规范
-
-```javascript
-import fs from "fs"
-import jsYaml from "js-yaml"
-```
-
 ### 命名约定
 
 | 元素     | 规范       | 示例                           |
 |----------|------------|--------------------------------|
-| 函数/变量 | camelCase | `clashBlackmatrix7`、`allProxies` |
-| 策略组名 | 中文       | `自动选择`、`故障转移`         |
+| 函数/变量 | camelCase | `allProxies`、`jpProxies` |
+| 策略组名 | 中文       | `自动选择`、`故障转移`、`日本节点` |
 | 注释     | 中文优先   | 保持与现有代码一致             |
 
-### 文件结构模式
+### 文件结构
 
-**纯函数模式** (clash.js 等): 导出 `main(config)` 函数
+**覆写脚本模式** (clash-latest.js): 导出 `main(config)` 函数
 ```javascript
 function main(config) {
-  // 处理逻辑
+  // 节点筛选
+  const allProxies = config.proxies.map(p => p.name)
+  const jpProxies = allProxies.filter(name => /(日本|JP|Japan|Tokyo|Osaka)/i.test(name))
+  
+  // 策略组定义
+  config['proxy-groups'] = [...]
+  
+  // 规则定义
+  config.rules = [...]
+  
   return config
-}
-```
-
-**独立脚本模式** (clash-blackmatrix7.js):
-```javascript
-import fs from "fs"
-import jsYaml from "js-yaml"
-
-try {
-  const fileContents = fs.readFileSync('./source.yaml', 'utf8')
-  var config = jsYaml.load(fileContents)
-  console.log("✅ 成功读取 YAML 文件，节点数量:", config.proxies.length)
-} catch (e) {
-  console.error("❌ 读取 YAML 失败:", e)
-  process.exit(1)
 }
 ```
 
 ### 错误处理
 
-- 文件操作和 YAML 解析必须使用 try/catch
+- 使用 `console.log` 输出调试信息
 - 成功信息使用 `✅` 前缀，错误信息使用 `❌` 前缀
 
 ### 节点筛选模式
 
 ```javascript
 const allProxies = config.proxies.map(p => p.name)
-const usProxies = allProxies.filter(name => name.includes("美国"))
-const jpProxies = allProxies.filter(name => name.includes("日本"))
+const usProxies = allProxies.filter(name => /(美国|US|USA|America)/i.test(name))
+const sgProxies = allProxies.filter(name => /(新加坡|SG|Singapore)/i.test(name))
+const jpProxies = allProxies.filter(name => /(日本|JP|Japan|Tokyo|Osaka)/i.test(name))
+const hkProxies = allProxies.filter(name => /(香港|HK|HKG)/i.test(name))
 
 // 空数组保护
 const checkNodes = nodes => nodes.length > 0 ? nodes : allProxies
 ```
+
+### ⚠️ 正则匹配注意事项
+
+**不要使用 `\b`（单词边界）** 匹配中文节点：
+
+```javascript
+// ✅ 正确 - 直接匹配关键字
+/(日本|JP|Japan|Tokyo|Osaka)/i
+
+// ❌ 错误 - \b 对中文字符不起作用，会匹配不到 "日本 01" 这类节点
+/\b(日本|JP|Japan|Tokyo|Osaka)\b/i
+```
+
+原因：`\b` 依赖于单词字符 `[a-zA-Z0-9_]`，而中文字符不属于此类。
 
 ### 策略组定义
 
@@ -95,6 +105,15 @@ const autoGroup = {
   tolerance: 50,
   proxies: allProxies
 }
+
+const jpGroup = {
+  name: "日本节点",
+  type: "url-test",
+  url: "http://www.gstatic.com/generate_204",
+  interval: 600,
+  tolerance: 50,
+  proxies: checkNodes(jpProxies)
+}
 ```
 
 ### 规则格式
@@ -103,8 +122,7 @@ const autoGroup = {
 config.rules = [
   "GEOSITE,private,DIRECT",           // 优先级从高到低
   "GEOSITE,category-ads-all,REJECT",
-  "DOMAIN-SUFFIX,dmm.co.jp,日本优选",
-  "RULE-SET,Advertising,REJECT",
+  "DOMAIN-SUFFIX,dmm.co.jp,日本节点",
   "GEOSITE,cn,DIRECT",
   "GEOIP,cn,DIRECT,no-resolve",
   "MATCH,Proxy"                        // 兜底规则必须放最后
@@ -124,27 +142,24 @@ config['rule-providers'] = {...}
 ### 规则提供者
 
 ```javascript
-const providerCommon = {
-  type: "http",
-  interval: 86400,
-  behavior: "classical",
-  format: "yaml"
-}
-
 config["rule-providers"] = {
-  "Advertising": {
-    ...providerCommon,
-    url: "https://cdn.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Advertising/Advertising.yaml"
+  "applications": {
+    type: "http",
+    behavior: "classical",
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/applications.txt",
+    path: "ruleset/applications.yaml",
+    interval: 86400
   }
 }
 ```
 
 ### 代码结构顺序
 
-1. **导入** - 文件顶部
-2. **配置加载** - 读取解析 YAML（独立脚本模式）
-3. **主函数** - 节点筛选 → 策略组 → 规则提供者 → 规则
-4. **执行调试** - 调用主函数并输出调试信息
+1. **主函数定义** - 接收 config 对象
+2. **节点筛选** - 从 config.proxies 中提取节点
+3. **策略组定义** - 创建代理策略组
+4. **规则配置** - 定义分流规则
+5. **返回 config** - 返回修改后的配置
 
 ### 注释规范
 
@@ -154,17 +169,10 @@ config["rule-providers"] = {
 // =========================================================
 
 // --- 筛选节点 ---
-// 简单粗暴：只要名字里含有这个国家的中文，就选出来
 ```
 
 ### 调试输出
 
 ```javascript
-console.log("\n====== 调试报告 ======")
-const groupNames = result['proxy-groups'].map(g => g.name)
-console.log("当前策略组列表:", groupNames)
+console.log("日本节点数量:", jpProxies.length)
 ```
-
-### 文件路径
-
-使用项目根目录的相对路径：`fs.readFileSync('./source.yaml', 'utf8')`

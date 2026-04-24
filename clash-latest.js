@@ -45,10 +45,10 @@ function main(config) {
   // =========================================================
   const allProxies = config.proxies.map(p => p.name)
 
-  const usProxies = allProxies.filter(name => /\b(美国|US|USA|America)\b/i.test(name))
-  const sgProxies = allProxies.filter(name => /\b(新加坡|SG|Singapore)\b/i.test(name))
-  const jpProxies = allProxies.filter(name => /\b(日本|JP|Japan|Tokyo|Osaka)\b/i.test(name))
-  const hkProxies = allProxies.filter(name => /\b(香港|HK|HKG)\b/i.test(name))
+  const usProxies = allProxies.filter(name => /(美国|US|USA|America)/i.test(name))
+  const sgProxies = allProxies.filter(name => /(新加坡|SG|Singapore)/i.test(name))
+  const jpProxies = allProxies.filter(name => /(日本|JP|Japan|Tokyo|Osaka)/i.test(name))
+  const hkProxies = allProxies.filter(name => /(香港|HK|HKG)/i.test(name))
 
   let geminiNodes = [...sgProxies, ...usProxies, ...hkProxies]
 
