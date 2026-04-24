@@ -58,7 +58,7 @@ function main(config) {
   // 2. 定义策略组
   // =========================================================
   const autoGroup = {
-    name: '自动选择',
+    name: '🚀 自动选择',
     type: 'url-test',
     url: 'http://www.gstatic.com/generate_204',
     interval: 600,
@@ -66,24 +66,24 @@ function main(config) {
     proxies: allProxies
   }
   const fallbackGroup = {
-    name: '故障转移',
+    name: '🔄 故障转移',
     type: 'fallback',
     url: 'http://www.gstatic.com/generate_204',
     interval: 600,
     proxies: allProxies
   }
   const proxyGroup = {
-    name: 'Proxy',
+    name: '🌐 Proxy',
     type: 'select',
-    proxies: ['自动选择', '故障转移', ...allProxies]
+    proxies: ['🚀 自动选择', '🔄 故障转移', ...allProxies]
   }
   const geminiGroup = {
-    name: 'Gemini',
+    name: '🤖 Gemini',
     type: 'select',
     proxies: checkNodes(geminiNodes)
   }
   const jpGroup = {
-    name: '日本节点',
+    name: '🇯🇵 日本节点',
     type: 'url-test',
     url: 'http://www.gstatic.com/generate_204',
     interval: 600,
@@ -91,7 +91,7 @@ function main(config) {
     proxies: checkNodes(jpProxies)
   }
   const hkGroup = {
-    name: '香港节点',
+    name: '🇭🇰 香港节点',
     type: 'select',
     proxies: checkNodes(hkProxies)
   }
@@ -124,19 +124,19 @@ function main(config) {
     'GEOSITE,category-ads-all,REJECT',
 
     // 特定业务 (你的日本优选)
-    'DOMAIN-SUFFIX,dmm.co.jp,日本节点',
-    'DOMAIN-SUFFIX,dmm.com,日本节点',
-    'DOMAIN-SUFFIX,mgstage.com,日本节点',
-    'DOMAIN-SUFFIX,javdb.com,香港节点',
-    'DOMAIN-SUFFIX,jdbstatic.com,香港节点',
+    'DOMAIN-SUFFIX,dmm.co.jp,🇯🇵 日本节点',
+    'DOMAIN-SUFFIX,dmm.com,🇯🇵 日本节点',
+    'DOMAIN-SUFFIX,mgstage.com,🇯🇵 日本节点',
+    'DOMAIN-SUFFIX,javdb.com,🇭🇰 香港节点',
+    'DOMAIN-SUFFIX,jdbstatic.com,🇭🇰 香港节点',
 
     // Google & Gemini (利用 Geosite 标签)
-    'GEOSITE,google,Gemini',
-    // 'GEOSITE,google-gemini,Gemini',
+    'GEOSITE,google,🤖 Gemini',
+    // 'GEOSITE,google-gemini,🤖 Gemini',
 
     // Telegram
-    'GEOSITE,telegram,Proxy',
-    'GEOIP,telegram,Proxy,no-resolve',
+    'GEOSITE,telegram,🌐 Proxy',
+    'GEOIP,telegram,🌐 Proxy,no-resolve',
 
     // --- 微软分流逻辑：精准提取直连，余下全部代理 ---
     // "GEOSITE,github,Proxy",
@@ -146,9 +146,9 @@ function main(config) {
     // 国内外大分流
     'GEOSITE,cn,DIRECT',
     'GEOIP,cn,DIRECT,no-resolve',
-    'GEOSITE,geolocation-!cn,Proxy', // 所有非中国域名，快速通行证
+    'GEOSITE,geolocation-!cn,🌐 Proxy', // 所有非中国域名，快速通行证
 
-    'MATCH,Proxy'
+    'MATCH,🌐 Proxy'
   ]
 
   return config
