@@ -9,7 +9,7 @@ function main(config) {
   config['geox-auto-update'] = true // 开启自动更新
   config['geox-update-interval'] = 6 // 更新间隔，单位为小时
   config['geox-url'] = {
-    geoip: 'https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat',
+    geoip: 'https://raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip-only-cn-private.dat',
     geosite: 'https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat',
     mmdb: 'https://github.com/Loyalsoldier/geoip/releases/latest/download/Country.mmdb'
   }
@@ -49,8 +49,9 @@ function main(config) {
   const sgProxies = allProxies.filter(name => /(新加坡|SG|Singapore)/i.test(name))
   const jpProxies = allProxies.filter(name => /(日本|JP|Japan|Tokyo|Osaka)/i.test(name))
   const hkProxies = allProxies.filter(name => /(香港|HK|HKG)/i.test(name))
+  const twProxies = allProxies.filter(name => /(台湾|TW|Taiwan)/i.test(name))
 
-  let geminiNodes = [...sgProxies, ...usProxies, ...hkProxies]
+  let geminiNodes = [...sgProxies, ...usProxies, ...twProxies, ...hkProxies,]
 
   const checkNodes = nodes => nodes.length > 0 ? nodes : allProxies
 
@@ -132,21 +133,10 @@ function main(config) {
 
     // Google & Gemini (利用 Geosite 标签)
     'GEOSITE,google,🤖 Gemini',
-    // 'GEOSITE,google-gemini,🤖 Gemini',
 
-    // Telegram
-    'GEOSITE,telegram,🌐 Proxy',
-    'GEOIP,telegram,🌐 Proxy,no-resolve',
-
-    // --- 微软分流逻辑：精准提取直连，余下全部代理 ---
-    // "GEOSITE,github,Proxy",
-    // "GEOSITE,win-update,DIRECT",
-    // "GEOSITE,microsoft,Proxy",
-
-    // 国内外大分流
+    // 核心：国内直连，国外都走代理
     'GEOSITE,cn,DIRECT',
     'GEOIP,cn,DIRECT,no-resolve',
-    'GEOSITE,geolocation-!cn,🌐 Proxy', // 所有非中国域名，快速通行证
 
     'MATCH,🌐 Proxy'
   ]

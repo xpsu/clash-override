@@ -150,7 +150,9 @@ function main(config) {
     // Gemini & Google (利用 Geosite 标签)
     'GEOSITE,google-gemini,Gemini',
     'GEOSITE,google,Gemini',
-    'GEOSITE,telegram,Proxy', // Telegram 域名
+    
+    // Telegram
+    'GEOSITE,telegram,Proxy', 
     'GEOIP,telegram,Proxy,no-resolve', // Telegram IP段
 
     // --- 微软分流逻辑：精准提取直连，余下全部代理 ---
