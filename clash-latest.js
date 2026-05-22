@@ -9,9 +9,8 @@ function main(config) {
   config['geox-auto-update'] = true // 开启自动更新
   config['geox-update-interval'] = 6 // 更新间隔，单位为小时
   config['geox-url'] = {
-    geoip: 'https://raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip-only-cn-private.dat',
     geosite: 'https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat',
-    mmdb: 'https://github.com/Loyalsoldier/geoip/releases/latest/download/Country.mmdb'
+    geoip: 'https://raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip-only-cn-private.dat'
   }
 
   // --- 3. DNS 配置 ---
@@ -35,6 +34,11 @@ function main(config) {
       'tls://223.6.6.6'
     ],
     nameserver: [
+      'https://dns.alidns.com/dns-query',
+      'https://doh.pub/dns-query'
+    ],
+    // 用于 direct 出口域名解析的 DNS 服务器
+    'direct-nameserver': [
       'https://dns.alidns.com/dns-query',
       'https://doh.pub/dns-query'
     ]
@@ -117,19 +121,19 @@ function main(config) {
   // =========================================================
   config.rules = [
     // 本地基础设施 (直接调用 dat 里的私有分类)
-    'GEOSITE,private,DIRECT',
     'GEOIP,private,DIRECT,no-resolve',
+    'GEOSITE,private,DIRECT',
     'RULE-SET,applications,DIRECT',
 
     // 广告拦截
     'GEOSITE,category-ads-all,REJECT',
 
     // 特定业务 (你的日本优选)
+    'DOMAIN-SUFFIX,javdb.com,🇭🇰 香港节点',
+    'DOMAIN-SUFFIX,jdbstatic.com,🇭🇰 香港节点',
     'DOMAIN-SUFFIX,dmm.co.jp,🇯🇵 日本节点',
     'DOMAIN-SUFFIX,dmm.com,🇯🇵 日本节点',
     'DOMAIN-SUFFIX,mgstage.com,🇯🇵 日本节点',
-    'DOMAIN-SUFFIX,javdb.com,🇭🇰 香港节点',
-    'DOMAIN-SUFFIX,jdbstatic.com,🇭🇰 香港节点',
 
     // Google & Gemini (利用 Geosite 标签)
     'GEOSITE,google,🤖 Gemini',
