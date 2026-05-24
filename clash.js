@@ -22,14 +22,7 @@ function main(config) {
     // 'respect-rules': true, // DNS 解析遵循分流规则
     'enhanced-mode': 'fake-ip',
     'fake-ip-range': '198.18.0.1/16',
-    "fake-ip-filter": [
-      // QQ快速登录检测失败
-      "localhost.ptlogin2.qq.com",
-      "localhost.sec.qq.com",
-      // 微信快速登录检测失败
-      "localhost.work.weixin.qq.com"
-    ],
-
+    
     // 默认 DNS, 用于解析 DNS 服务器 的域名
     'default-nameserver': [
       'tls://223.5.5.5',
