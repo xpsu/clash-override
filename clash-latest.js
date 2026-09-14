@@ -6,8 +6,8 @@ function main(config) {
   config['geodata-mode'] = true
   // config['geodata-loader'] = 'memconservative'; // 内存节省模式
 
-  config['geox-auto-update'] = true // 开启自动更新
-  config['geox-update-interval'] = 6 // 更新间隔，单位为小时
+  config['geo-auto-update'] = true // 开启自动更新
+  // config['geo-update-interval'] = 12 // 更新间隔，默认24小时
   config['geox-url'] = {
     geosite: 'https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat',
     geoip: 'https://raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip-only-cn-private.dat'
@@ -20,18 +20,13 @@ function main(config) {
     ipv6: false,
     'enhanced-mode': 'fake-ip',
     'fake-ip-range': '198.18.0.1/16',
-    
+
     // 默认 DNS, 用于解析 DNS 服务器 的域名
     'default-nameserver': [
       'tls://223.5.5.5',
       'tls://223.6.6.6'
     ],
     nameserver: [
-      'https://dns.alidns.com/dns-query',
-      'https://doh.pub/dns-query'
-    ],
-    // 用于 direct 出口域名解析的 DNS 服务器
-    'direct-nameserver': [
       'https://dns.alidns.com/dns-query',
       'https://doh.pub/dns-query'
     ]
@@ -48,7 +43,7 @@ function main(config) {
   const hkProxies = allProxies.filter(name => /(香港|HK|HKG)/i.test(name))
   const twProxies = allProxies.filter(name => /(台湾|TW|Taiwan)/i.test(name))
 
-  let geminiNodes = [...sgProxies, ...usProxies, ...twProxies, ...hkProxies,]
+  const geminiNodes = [...allProxies]
 
   const checkNodes = nodes => nodes.length > 0 ? nodes : allProxies
 
@@ -82,10 +77,7 @@ function main(config) {
   }
   const jpGroup = {
     name: '🇯🇵 日本节点',
-    type: 'url-test',
-    url: 'http://www.gstatic.com/generate_204',
-    interval: 600,
-    tolerance: 50,
+    type: 'select',
     proxies: checkNodes(jpProxies)
   }
   const hkGroup = {
@@ -130,6 +122,9 @@ function main(config) {
 
     // Google & Gemini (利用 Geosite 标签)
     'GEOSITE,google,🤖 Gemini',
+
+    // ChatGPT
+    'GEOSITE,openai,🤖 Gemini',
 
     // 核心：国内直连，国外都走代理
     'GEOSITE,cn,DIRECT',
