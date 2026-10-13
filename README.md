@@ -15,6 +15,8 @@ Clash/Mihomo 代理配置覆写脚本集合，支持多种规则源和平台。
 |------|------|----------|
 | `clash.js` | 主脚本，Geodata + Loyalsoldier 混合 | 桌面端 |
 | `clash-latest.js` | 最新稳定版本（推荐用于覆写） | 桌面端 |
+| `clash-mobile.js` | 移动端优化版本（低内存、省电、Sniffer） | 移动端 |
+| `clash-ruleset.js` | 基于 Loyalsoldier 远程规则集的版本 | 桌面端 |
 | `clash-example.js` | 示例代码，供参考学习 | 参考 |
 
 ## 使用方法
@@ -25,11 +27,15 @@ Clash/Mihomo 代理配置覆写脚本集合，支持多种规则源和平台。
 2. 粘贴 `clash-latest.js` 内容
 3. 保存并更新订阅
 
-### 移动端 (Clash Meta for Android)
+### 移动端 (FlClash / FlClashX)
 
-1. 配置 → 选择订阅 → 右上角菜单 → 「覆写脚本」
-2. 粘贴 `clash-latest.js` 内容
-3. 保存并更新
+1. 配置 → 选择订阅 → 「覆写」→ 新建脚本
+2. 粘贴 `clash-mobile.js` 内容并选中该脚本
+3. 保存并更新订阅
+
+> ⚠️ Clash Meta for Android 自带的「覆写」是结构化表单（端口 / DNS / 进程匹配等少量字段），
+> **不能执行 JS 脚本**。如需在 Android 上使用本脚本，请改用 FlClash 等支持
+> `main(config)` 覆写脚本的客户端。
 
 ## 节点命名规范
 

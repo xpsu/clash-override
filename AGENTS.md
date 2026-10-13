@@ -10,8 +10,10 @@ Clash/Mihomo 代理配置覆写脚本，用于 Clash Verge、Clash Meta for Andr
 
 | 文件 | 用途 |
 |------|------|
-| `clash.js` | Geodata + Loyalsoldier 混合 |
-| `clash-latest.js` | 最新稳定版本（推荐） |
+| `clash.js` | Geodata + Loyalsoldier 混合（桌面端） |
+| `clash-latest.js` | 最新稳定版本（推荐，桌面端） |
+| `clash-mobile.js` | 移动端版本（低内存、省电、Sniffer） |
+| `clash-ruleset.js` | 基于远程规则集的版本 |
 | `clash-example.js` | 示例代码 |
 
 ## 核心规范
